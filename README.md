@@ -4,7 +4,7 @@ This is a simple implementation of a gateway, dns and dhcp server implementation
 
 This is meant to work on any Debian server with two network interfaces (One for the internal network and the otner for the internet connection). To use this on any other linux distro you may need to change the docker instalation process and adapt the systemd services in the ```services/```  folder if you're using another init program.
 
-> Important!:  If you have more than 2 interfaces this might kaput the other ones, please check the ```./net-config/interfaces.template``` file.
+> :warning:  **If you have more than 2 network interfaces** this might kaput the other ones, please check the ```./net-config/interfaces.template``` file.
 
 ## Installation process
 ### Installing docker

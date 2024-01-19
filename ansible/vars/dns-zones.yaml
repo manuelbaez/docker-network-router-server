@@ -1,0 +1,9 @@
+dns_zones:
+  - zone_name: home.arpa
+    names: |
+      myHost.home.arpa.      IN      A      {{network_prefix}}.5
+      myHost2.home.arpa.     IN      A      {{network_prefix}}.6
+      myHost3.home.arpa.     IN      A      {{network_prefix}}.7
+  - zone_name: home.local
+    names: |
+      myHost.home.local.      IN      A      {{network_prefix}}.15

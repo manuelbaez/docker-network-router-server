@@ -1,0 +1,15 @@
+- name: Clear docker resources
+  hosts: 'networkServers'
+  become: yes
+  vars_files:
+    - ../home-env-vars.yaml
+  tasks:
+    - name: Stop Containers
+      shell: docker container stop $(docker ps -aq) | true
+    - name: Prune system
+      shell: yes | docker system prune
+- import_playbook: create-docker-client-net.yaml
+- import_playbook: setup-dhcp-server.yaml
+- import_playbook: setup-dns-server.yaml
+- import_playbook: setup-router-server.yaml
+    

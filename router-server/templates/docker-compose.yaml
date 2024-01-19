@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  routerServer:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+        - linux/arm/v7
+        - amd64
+    image: router-server
+    container_name: router_server
+    privileged: true
+    networks:
+      client: 
+        ipv4_address: '{{networkRouter}}'
+      external: {} 
+    volumes:
+      - /opt/router-server/config:/config
+networks:
+  client:
+    name: client-net
+    external: true
+  external: 
+    name: external-net
+    external: true

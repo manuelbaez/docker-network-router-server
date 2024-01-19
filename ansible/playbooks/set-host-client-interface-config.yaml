@@ -1,0 +1,20 @@
+- name: 'Setup target client interface'
+  hosts: 'networkServers'
+  become: yes
+  vars_files:
+    - ../vars/{{varsFile}}
+  tasks:
+    - name: Create server directories
+      shell: mkdir -p /opt/network-settings/
+    - name: Apply templates
+      template: src={{item.src}} dest={{item.dest}}
+      with_items:
+        - src: ../../net-config/interfaces.template
+          dest: /opt/network-settings/interfaces
+    - name: Set interface config
+      shell: cat /opt/network-settings/interfaces > /etc/network/interfaces
+    - name: Enable IP Forwading
+      shell: echo "net.ipv4.ip_forward = 1" > /etc/sysctl.conf && sysctl -p /etc/sysctl.conf
+    - name: Wait for server to restart
+      reboot:
+        reboot_timeout: 3600

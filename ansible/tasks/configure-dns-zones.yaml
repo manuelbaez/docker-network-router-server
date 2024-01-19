@@ -1,0 +1,11 @@
+- name: Configure zone templates
+  template: src={{item.src}} dest={{item.dest}}
+  with_items:
+    - src: ../../dns-server/templates/config/named.conf.local.template
+      dest: /opt/dns-server/tmp/named.conf.local.{{dns_zone.zone_name}}
+    - src: ../../dns-server/templates/config/zones/db.zone.template
+      dest: /opt/dns-server/config/zones/db.{{dns_zone.zone_name}}
+
+- name: Append to named.conf.local
+  shell: |
+    cat /opt/dns-server/tmp/named.conf.local.{{dns_zone.zone_name}} >> /opt/dns-server/config/named.conf.local

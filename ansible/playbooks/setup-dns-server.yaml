@@ -1,0 +1,56 @@
+- name: "Setup DNS servers"
+  hosts: "networkServers"
+  become: yes
+  vars_files:
+    - ../vars/{{varsFile}}
+    - ../vars/dns-zones.yaml
+  tasks:
+    - name: Create clean directories
+      shell: |
+        rm -rf /opt/dns-server | true \
+        && mkdir -p /opt/dns-server/cache \
+        /opt/dns-server/tmp \
+        /opt/dns-server/cache \
+        /opt/dns-server/config/zones | true
+
+    - name: Copy config files
+      copy:
+        src: ../../dns-server/config/
+        dest: /opt/dns-server/config/
+
+    - name: Copy DockerFile
+      copy:
+        src: ../../dns-server/Dockerfile
+        dest: /opt/dns-server/Dockerfile
+
+    - name: Create named.config.local
+      shell: touch /opt/dns-server/config/named.conf.local
+
+    - name: Configure zones
+      include_tasks: ../tasks/configure-dns-zones.yaml
+      with_items: "{{ dns_zones }}"
+      loop_control:
+        loop_var: dns_zone
+
+    - name: Remove temp template files
+      shell: rm -rf /opt/dns-server/tmp
+
+    - name: Apply templates
+      template: src={{item.src}} dest={{item.dest}}
+      with_items:
+        - src: ../../dns-server/templates/docker-compose.yaml
+          dest: /opt/dns-server/docker-compose.yaml
+        - src: ../../dns-server/templates/config/named.conf.options
+          dest: /opt/dns-server/config/named.conf.options
+        - src: ../../dns-server/templates/start.sh
+          dest: /opt/dns-server/start.sh
+
+    - name: Run image
+      shell: cd /opt/dns-server && docker compose down --rmi all && docker compose up -d
+
+    - name: Copy Systemd Service File
+      copy:
+        src: ../../services/dns-server.service
+        dest: /etc/systemd/system/dns-server.service
+    - name: Enable Service
+      shell: systemctl enable dns-server

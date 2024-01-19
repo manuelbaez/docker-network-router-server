@@ -1,0 +1,30 @@
+- name: "Setup DHCP servers"
+  hosts: "networkServers"
+  become: yes
+  vars_files:
+    - ../vars/{{varsFile}}
+  tasks:
+    - name: Create directories
+      shell: rm -rf /opt/dhcp-server | true && mkdir -p /opt/dhcp-server/local/dhcp/ /opt/dhcp-server/config | true
+    - name: Create leases db
+      shell: touch /opt/dhcp-server/local/dhcp/dhcpd.leases | true
+    - name: Copy Dockerfile
+      copy:
+        src: ../../dhcp-server/Dockerfile
+        dest: /opt/dhcp-server/Dockerfile
+    - name: Apply templates
+      template: src={{item.src}} dest={{item.dest}}
+      with_items:
+        - src: ../../dhcp-server/templates/docker-compose.yaml
+          dest: /opt/dhcp-server/docker-compose.yaml
+        - src: ../../dhcp-server/templates/config/dhcpd.conf
+          dest: /opt/dhcp-server/config/dhcpd.conf
+    - name: Run image
+      shell: cd /opt/dhcp-server && docker compose down --rmi all && docker compose up -d
+    - name: Copy Systemd Service File
+      copy:
+        src: ../../services/dhcp-server.service
+        dest: /etc/systemd/system/dhcp-server.service
+    - name: Enable Service
+      shell: systemctl enable dhcp-server
+

@@ -1,0 +1,12 @@
+- name: "Create docker client interface network for DHCP/DNS/Firewall"
+  hosts: "networkServers"
+  become: yes
+  vars_files:
+    - ../vars/{{varsFile}}
+  tasks:
+    - name: Create internal macvlan Docker network
+      shell: docker network create --subnet {{clientSubnet}} --gateway {{internalDockerGateway}} --driver macvlan -o parent={{internalInterface}} client-net | true
+    # - name: Create External macvlan Docker Network
+    #   shell: docker network create --subnet {{externalSubnet}} --gateway {{externalGateway}} --driver macvlan -o parent={{externalInterface}} external-net | true
+    - name: Create External Bridge Docker Network
+      shell: docker network create --subnet {{externalSubnet}} --gateway {{externalGateway}} --driver bridge -o parent={{externalInterface}} external-net | true

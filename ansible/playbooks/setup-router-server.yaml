@@ -1,0 +1,27 @@
+- name: "Setup Router servers"
+  hosts: "networkServers"
+  become: yes
+  vars_files:
+    - ../vars/{{varsFile}}
+  tasks:
+    - name: Create directories
+      shell: mkdir -p /opt/router-server/config/ | true
+    - name: Copy Dockerfile
+      copy:
+        src: ../../router-server/Dockerfile
+        dest: /opt/router-server/Dockerfile
+    - name: Apply templates
+      template: src={{item.src}} dest={{item.dest}}
+      with_items:
+        - src: ../../router-server/templates/docker-compose.yaml
+          dest: /opt/router-server/docker-compose.yaml
+        - src: ../../router-server/templates/start.sh
+          dest: /opt/router-server/config/start.sh
+    - name: Run image
+      shell: cd /opt/router-server && docker compose down --rmi all && docker compose up -d
+    - name: Copy Systemd Service File
+      copy:
+        src: ../../services/router-server.service
+        dest: /etc/systemd/system/router-server.service
+    - name: Enable Service
+      shell: systemctl enable router-server

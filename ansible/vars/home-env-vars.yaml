@@ -1,0 +1,24 @@
+network_prefix: 192.168.16
+networkRouter: '{{network_prefix}}.1'
+
+#Host network
+internalInterface: enp2s0
+externalInterface: enp1s0
+serverInternalAddres: '{{network_prefix}}.4'
+
+#DHCP Config
+ipRangeStart: '{{network_prefix}}.20'
+ipRangeEnd: '{{network_prefix}}.250'
+netMask: 255.255.255.0
+subnet: '{{network_prefix}}.0'
+
+#Docker Networks
+clientSubnet: '{{subnet}}/24'
+externalSubnet: 192.168.52.0/24
+internalDockerGateway: '{{network_prefix}}.5'
+externalGateway: 192.168.52.1
+
+#Containers IP
+dnsContainerIp: '{{network_prefix}}.3'
+dhcpContainerIp: '{{network_prefix}}.2'
+

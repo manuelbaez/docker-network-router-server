@@ -1,0 +1,1 @@
+ansible-playbook ./ansible/playbooks/setup-dns-server.yaml -i ./ansible/inventory.yaml  --extra-vars "varsFile=home-env-vars.yaml"

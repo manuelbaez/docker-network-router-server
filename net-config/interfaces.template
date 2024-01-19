@@ -1,0 +1,8 @@
+auto {{externalInterface}}
+iface {{externalInterface}} inet dhcp
+
+auto {{internalInterface}}
+iface {{internalInterface}} inet static
+      address {{serverInternalAddres}}
+      network {{subnet}}
+      netmask {{netMask}}

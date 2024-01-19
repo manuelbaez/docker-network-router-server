@@ -1,0 +1,15 @@
+[Unit]
+Description=Docker dhcp server
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/dhcp-server/
+ExecStart=/bin/docker compose up -d
+ExecStop=/bin/docker compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

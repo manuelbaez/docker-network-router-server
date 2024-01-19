@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  dnsServer:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+        - linux/arm/v7
+        - amd64
+    image: dns-server
+    container_name: dns_server
+    privileged: true
+    networks:
+      client: 
+        ipv4_address: '{{dnsContainerIp}}'
+      external: {}
+    volumes:
+      - ./config/:/etc/bind
+      - /opt/dns-server/cache/:/var/cache/bind/
+      - /opt/dns-server/logs/:/var/log/
+networks:
+  client:
+    name: client-net
+    external: true
+  external: 
+    name: external-net
+    external: true

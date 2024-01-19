@@ -1,0 +1,15 @@
+$TTL    604800
+@       IN      SOA     ns.{{dns_zone.zone_name}}. root.{{dns_zone.zone_name}}. (
+                  3       ; Serial
+             604800     ; Refresh
+              86400     ; Retry
+            2419200     ; Expire
+             604800 )   ; Negative Cache TTL
+;
+ 
+@                           IN      NS     ns.{{dns_zone.zone_name}}.
+ns                          IN      A     {{network_prefix}}.1
+
+; Names
+gateway.{{dns_zone.zone_name}}.         IN      A      {{network_prefix}}.4
+{{dns_zone.names}}

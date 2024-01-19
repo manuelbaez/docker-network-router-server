@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  dhcpServer:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64
+        - linux/arm/v7
+        - amd64
+    image: dhcp-server
+    container_name: dhcp_server
+    privileged: true
+    networks:
+      dhcp-net:
+        ipv4_address: {{dhcpContainerIp}}
+    volumes:
+      - /opt/dhcp-server/config:/config
+      - /opt/dhcp-server/local/dhcp/:/var/lib/dhcp/
+networks:
+  dhcp-net:
+    name: client-net
+    external: true
